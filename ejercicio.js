@@ -2,9 +2,15 @@ const url =
   "https://gist.githubusercontent.com/josejbocanegra/9a28c356416badb8f9173daf36d1460b/raw/5ea84b9d43ff494fcbf5c5186544a18b42812f09/restaurant.json";
 
 
-  fetch(url).then(response => response.json()).then(response => createTable(response));
 
   let ordenar = ((json, llave) => json.sort((a, b) => ((a[llave] < b[llave]) ? 1 : ((a[llave] > b[llave]) ? -1 : 0))));
+
+
+  function muestraProductos() {
+    fetch(url).then(response => response.json()).then(response => createTable(response));
+    console.log('Gracias por pinchar'+producto);
+  } 
+  document.getElementById("Burguers").onclick = muestraProductos;
 
 function createTable(json){
 var t=0 ;
