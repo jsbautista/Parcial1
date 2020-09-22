@@ -6,153 +6,78 @@ const url =
   let ordenar = ((json, llave) => json.sort((a, b) => ((a[llave] < b[llave]) ? 1 : ((a[llave] > b[llave]) ? -1 : 0))));
 
 
-  function muestraProductos() {
-    fetch(url).then(response => response.json()).then(response => createTable(response));
-    console.log('Gracias por pinchar'+producto);
+  function muestraProductos(producto) {
+    fetch(url).then(response => response.json()).then(response => createCards(response,producto));
   } 
-  document.getElementById("Burguers").onclick = muestraProductos;
-
-function createTable(json){
-var t=0 ;
-var division = document.getElementById("tabla");
-var tabla=document.createElement("table");
-var encabezados = document.createElement("tr");
-var encabezado1 = document.createElement("th");
-var texto1 = document.createTextNode("#");
-encabezado1.appendChild(texto1);
-encabezados.appendChild(encabezado1);
-encabezado1.setAttribute("width", "15%");
-var encabezado2 = document.createElement("th");
-var texto2 = document.createTextNode("Events");
-encabezado2.appendChild(texto2);
-encabezados.appendChild(encabezado2);
-var encabezado3 = document.createElement("th");
-var texto3 = document.createTextNode("Squirrels");
-encabezado3.appendChild(texto3);
-encabezados.appendChild(encabezado3);
-tabla.appendChild(encabezados);
-for (var i = 0; i < json.length; i++) {
-  // Crea las hileras de la tabla
-  var fila = document.createElement("tr");
-  var casilla0 = document.createElement("th");
-var textoCasilla0 = document.createTextNode(i+1);
-casilla0.appendChild(textoCasilla0);
-fila.appendChild(casilla0);
-var casilla1 = document.createElement("td");
-var textoCasilla1= document.createTextNode(json[i].events);
-casilla1.appendChild(textoCasilla1);
-fila.appendChild(casilla1);
-var casilla2 = document.createElement("td");
-var textoCasilla2 = document.createTextNode(json[i].squirrel);
-casilla2.appendChild(textoCasilla2);
-fila.appendChild(casilla2);
-if(json[i].squirrel){
-  console.log("Aqui");
-  fila.style.backgroundColor="red";
-  t+=1;
-}
-tabla.appendChild(fila);
-
-}
-division.appendChild(tabla);
-tabla.setAttribute("width", "80%");
-tabla.setAttribute("frame", "void");
-tabla.setAttribute("rules", "rows");
-createTableEvents(json,t);
-}
-
-function createTableEvents(json,posibles){
-  var eventos=[{valor:"a",tp:0,tn:0,fp:0,fn:0,a:0,totales:0}];
-
-for(var i =0;i<json.length;i++){
-  
-  for(let x in json[i].events){
-    let evento = json[i].events[x];
-    let index = eventos.map((o) => o.valor).indexOf(evento);
-    if(index== -1){
-    eventos.push({valor:evento,tp:0,tn:0,fp:0,fn:0,a:1,totales:0});
-    
-    index=eventos.length-1;
-  }else
-  {
-    eventos[index].a+=1;
+  const burguer = document.querySelector("#Burguers");
+burguer.addEventListener("click", function(evento){
+  muestraProductos("Burguers");
+});
+const taco = document.querySelector("#Tacos");
+taco.addEventListener("click", function(evento){
+  muestraProductos("Tacos");
+});
+const salad = document.querySelector("#Salads");
+salad.addEventListener("click", function(evento){
+  muestraProductos("Salads");
+});
+const dessert = document.querySelector("#Desserts");
+dessert.addEventListener("click", function(evento){
+  muestraProductos("Desserts");
+});
+const drink = document.querySelector("#Drinks");
+drink.addEventListener("click", function(evento){
+  muestraProductos("Drinks and Sides");
+});
+function createCards(json1,producto){
+console.log(json1);
+var indice=0;
+for(i in json1){
+  if(json1[i].name==producto){
+    indice=i;
   }
-
-    if(json[i].squirrel){
-      eventos[index].tp+=1;    
-    console.log("si"+eventos[index].tp);
-
-  }
-    else
-    {
-      eventos[index].fn+=1;
-    }
-  
 }
+json=json1[indice].products;
+console.log(json);
+console.log(json);
+var division = document.getElementById("Cards");
+division.innerHTML="";
+var categoria = document.getElementById("Categoria");
+categoria.innerHTML=json1[indice].name;
+for (var i in json) {
+  var dividir=document.createElement("div");
+  var card=document.createElement("div");
+  var img =document.createElement("img");
+  var cuerpo =document.createElement("div");
+  var titulo =document.createElement("h5");
+  var descripcion =document.createElement("p");
+  var precio =document.createElement("h6");
+  var boton =document.createElement("a");
+  dividir.className="col-3";
+  card.className="card";
+  card.style="width: 23rem;";
+  img.className="card-img-top imagenCard";
+  img.src=json[i].image;
+  img.alt=json[i].name;
+  cuerpo.className="card-body";
+  cuerpo.style="position: relative;"
+  titulo.className="card-title";
+  titulo.innerHTML=json[i].name;
+  descripcion.className="card-text";
+  descripcion.innerHTML = json[i].description;
+  precio.innerHTML = json[i].price;
+  boton.className="btn btn-dark";
+  boton.style="position: absolute; left: 5%; bottom: 10px;"
+  boton.innerHTML="Add to cart";
+  cuerpo.appendChild(titulo);
+  cuerpo.appendChild(descripcion);
+  cuerpo.appendChild(precio);
+  cuerpo.appendChild(boton);
+  card.appendChild(img);
+  card.appendChild(cuerpo);
+  dividir.appendChild(card);
+  division.appendChild(dividir);
 
-
-
-}
-eventos.splice(0,1);
-for(var i=0;i<eventos.length;i++){  
-  eventos[i].fp=posibles-eventos[i].tp;
-  eventos[i].tn=(json.length-posibles)-eventos[i].fn;
-  console.log("Prueba "+eventos[i].tp+" y verdaderos"+ posibles);
-}
-let total=0;
-console.log(eventos);
-let m=0;
-for(let y in eventos){
-  
-  total=((eventos[m].tp*eventos[m].tn)-(eventos[m].fp*eventos[m].fn))/(Math.pow(((eventos[m].tp+eventos[m].fp)*(eventos[m].tp+eventos[m].fn)*(eventos[m].tn+eventos[m].fp)*(eventos[m].tn+eventos[m].fn)),(1/2)));
-  console.log(eventos[m].fn+" y m es "+m+" y tp es : "+eventos[m].tp);
-  console.log(eventos[m].a+" y m es "+m+" y tp es : "+eventos[m].tp+" y tn es : "+eventos[m].tn+" y fp es : "+eventos[m].fp+" y fn es : "+eventos[m].fn);
-  console.log(total);
-  eventos[m].totales=total;
-  m+=1;
-    
-}
-ordenar(eventos,"totales");
-var division = document.getElementById("tabla2");
-var tabla=document.createElement("table");
-var encabezados = document.createElement("tr");
-var encabezado1 = document.createElement("th");
-var texto1 = document.createTextNode("#");
-encabezado1.appendChild(texto1);
-encabezados.appendChild(encabezado1);
-encabezado1.setAttribute("width", "15%");
-var encabezado2 = document.createElement("th");
-var texto2 = document.createTextNode("Event");
-encabezado2.appendChild(texto2);
-encabezados.appendChild(encabezado2);
-var encabezado3 = document.createElement("th");
-var texto3 = document.createTextNode("Correlation");
-encabezado3.appendChild(texto3);
-encabezados.appendChild(encabezado3);
-tabla.appendChild(encabezados);
-for (var i = 0; i < eventos.length; i++) {
-  // Crea las hileras de la tabla
-  var fila = document.createElement("tr");
-  var casilla0 = document.createElement("th");
-var textoCasilla0 = document.createTextNode(i+1);
-casilla0.appendChild(textoCasilla0);
-fila.appendChild(casilla0);
-var casilla1 = document.createElement("td");
-var textoCasilla1= document.createTextNode(eventos[i].valor);
-casilla1.appendChild(textoCasilla1);
-fila.appendChild(casilla1);
-var casilla2 = document.createElement("td");
-var textoCasilla2 = document.createTextNode(eventos[i].totales);
-casilla2.appendChild(textoCasilla2);
-fila.appendChild(casilla2);
-tabla.appendChild(fila);
 
 }
-division.appendChild(tabla);
-tabla.setAttribute("width", "80%");
-tabla.setAttribute("frame", "void");
-tabla.setAttribute("rules", "rows");
-  }
- 
-
-
+}
