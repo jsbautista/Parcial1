@@ -1,0 +1,14 @@
+.banner , .foot {
+    width:100%;
+  }
+#nombreRestaurante{
+    font-family: "Satisfy";
+}
+ img{
+     width: 100%;
+     height: 100%;
+ }
+ #carroCompras{
+    height: 50px;
+    width: 60px;
+ }
